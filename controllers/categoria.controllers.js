@@ -11,6 +11,7 @@ const getCategoria = async(req,res)=>{
             Categoria.find(query)
                 .skip(Number(desde))
                 .limit(Number(hasta))
+                .populate('usuario',['nombre','email'])
         ])
         res.json({
             total,
@@ -22,17 +23,30 @@ const getCategoria = async(req,res)=>{
     }
 }
 
+//Get one//
+
+const getById = async (req,res)=>{
+    try {
+        const query = {estado:true};
+        const {id} = req.params;
+
+        const [total,categoria] = await Promise.all([
+            Categoria.countDocuments(query),
+            Categoria.findById(id)
+        ])
+        res.json({
+            total,
+            categoria
+        })
+
+    } catch (error) {
+        res.status(404);
+        res.send({error:'No funca'})
+    }
+}
 const postCategoria = async(req, res ) => {
 
     const nombre = req.body.nombre.toUpperCase();
-
-    const categoriaDB = await Categoria.findOne({ nombre });
-
-    if ( categoriaDB ) {
-        return res.status(400).json({
-            msg: `La categoria ${ categoriaDB.nombre }, ya existe`
-        });
-    }
    /*  console.log("usuario:",usuario); */
     // Generar la data a guardar
     const data = {
@@ -86,5 +100,6 @@ module.exports = {
     getCategoria,
     postCategoria,
     deleteCategoria,
-    putCategoria
+    putCategoria,
+    getById
 }

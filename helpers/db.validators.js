@@ -1,5 +1,6 @@
 //6. trasladamos desde usuario.routes la importacion del modelo Role
 const Categoria = require('../models/Categoria.js');
+const Cheese = require('../models/Cheese.js');
 const Role = require ('../models/Role.js');
 // 11. importamos modelo Usuario
 const Usuario = require('../models/Usuario.js');
@@ -42,11 +43,27 @@ const categoriExistsById = async( id ) => {
     }
 }
 
+const categoriExist = async (nombre='')=>{
+    const categoria = await Categoria.findOne({nombre});
+    if(categoria){
+        throw new Error(`La categoria ${nombre} ya esta registrada`);
+    }
+}
+
+const cheeseExistById = async (id)=>{
+    const cheeseExist = await Cheese.findById(id)
+    if(!cheeseExist){
+        throw new Error(`el id (cheese) no existe ${id}`)
+    }
+}
+
 module.exports = {
     isValidRole,
     // 8. exporto validador perzonalizado emailExiste
     emailExiste,
     //15. exporto validador perzonalizado userExistsById - (findById)
     userExistsById,
-    categoriExistsById
+    categoriExistsById,
+    categoriExist,
+    cheeseExistById
 }
